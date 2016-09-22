@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <section>
+        {% for serie in series %}
+            <div class="flexrow container-fluid Box " style='background-image: url("{{serie.url}}");background-size: cover;background-repeat: no-repeat;background-position-y: 25%;'>
+                <!--<div class="BoxFrame fh">-->
+                <div class="BoxFrame" style="width : 100%;background-color: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); padding:20px;
+
+
+                     ">
+
+                    <div class="BoxTitle col-sm-6" >
+                        <h1 style="font-size : 50px">{{ serie.titre }}</h1>
+                        {#<h3 style="padding-left:15px">Vivamus a varius augue. Donec non venenatis lectus. Mauris at porta felis.</h3>#}
+                    </div>
+
+                    <div class="flexcol BoxInfo col-sm-offset-3 col-sm-3">
+                        <div class="flexcol BoxFrame" style="background-color: rgba(200, 0, 0, 0.8);
+                             ">
+                            <div class="BoxInfoText flexcol">
+                                {#<h4>Le Retour des dragons</h4>#}
+                                <p style="align-self: center">
+                                    {{ serie.synopsis }}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="align-self: flex-end">
+                            <a href="{{path('serie_show',{'id':serie.id})}}" >
+                                <div class="btn btn-info" >
+                                    <div class="BoxFrameBtn" >
+                                        <p>En Savoir plus</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    {% endfor %}
+
+</section>
+{% endblock %}

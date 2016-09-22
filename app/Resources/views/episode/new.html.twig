@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section>
+        <h1>Episode creation</h1>
+
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <input type="submit" class="form-control btn btn-success" value="Créer">
+
+        {{ form_end(form) }}
+    </section>
+
+
+
+{% endblock %}

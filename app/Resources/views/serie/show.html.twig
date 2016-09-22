@@ -1,0 +1,306 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section>
+        <div class="row ">
+
+            <div class="col-sm-10">
+                <div class="row">
+                    <!--/////////////////********|Image and Rating|********\\\\\\\\\\\\\\\\\!-->
+                    <div class="col-sm-7">
+                        <img src="{{serie.url}}" class="img-responsive" alt="Cinque Terre">
+                        <div class=" Rating flexcol" style="align-items:  center;" >
+                            <div class="flexrow" style="justify-content:  center;width : 100%;">
+                                {% if app.user is not null and serie.id not in app.user.voteSeries|keys %}
+                                    <form method="POST" action="{{path('serie_vote',{'id':serie.id})}}">
+                                        <div style="width : 80px;">
+                                            <select class="form-control" name="vote">
+                                                {% for ii in 0..5 %}
+                                                    <option value="{{ii}}"
+                                                            {# % if serie.id in app.user.voteSeries|keys and ii == app.user.voteSeries[serie.id] % #} {# { "selected" } #} {# % endif % #}
+                                                            >{{ii}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <input type="submit" value="Voter" class="form-control">
+                                        </div>
+                                    </form>
+                                {% endif %}
+                            </div>
+
+                            <div class="flexcol" style="align-items:  center;
+                                 ">
+                                <div class="Star flexrow" style="flex-wrap: nowrap">
+
+                                    {% set counter = 0 %}
+                                    {% if serie.getNoteSerie != 0 %}
+                                        {% for i in 1..serie.getNoteSerie %}
+                                            <span class="glyphicon glyphicon-star"></span>
+                                        {% endfor %}
+                                        {% if serie.getNoteSerie < 5 %}
+                                            {% set counter = 5-serie.getNoteSerie %}
+                                            {% for i in 1..counter %}
+                                                <span class="glyphicon glyphicon-star-empty"></span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+
+                                    <h3>{{ serie.getNoteSerie }} - {{ serie.notes|length}} vote(s)</h3>
+                                {% else %}
+                                    <h3>Pas de votes pour cette série</h3>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--/////////////////********| Description Série|********\\\\\\\\\\\\\\\\\!-->
+                    <div class=" col-sm-5 flexcol" >
+                        <div class="detailTitle flexrow" style="justify-content: space-between; padding:20px; align-items:  center;">
+                            <h1>{{ serie.titre }}</h1>
+                            <div>
+                                <a href="{{path('abonnement',{'id':serie.id})}}" class="aButton" >
+                                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+
+                                        {% if serie in app.user.abonnements  %}
+                                            <div class="btn btn-primary">
+                                                <div class="BoxFrameBtn">
+                                                    <p> Se Désabonner</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="btn btn-success">
+                                                <div class="BoxFrameBtn">
+                                                    <p>Abonne toi</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    </a>
+                                    <a href="{{path('episode_new',{'id':saison_last.id})}}" class="aButton" >
+                                        <div class="btn btn-info">
+                                            <div class="BoxFrameBtn">
+                                                <p>Proposer un épisode</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endif %}
+
+                                {% if is_granted('ROLE_MODO') %}
+
+                                    <div class="btn btn-warning" >
+                                        <div class="BoxFrameBtn " >
+                                            <p><a href="{{ path('serie_edit', { 'id': serie.id }) }}">Editer</a></p>
+                                        </div>
+                                    </div>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <div class="btn btn-danger" >
+                                            {{ form_start(delete_form) }}
+                                            <input type="submit" class="BoxFrameBtn" style="background-color: inherit;border: 0px" value="Delete">
+                                            {{ form_end(delete_form) }}
+
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="detailDescription">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#Descriptif">Description</a></li>
+                                <li><a data-toggle="tab" href="#Acteurs">Acteurs</a></li>
+                            </ul>
+
+                            <div class="tab-content" style="padding:10px">
+                                <!--/////////////////********|Descriptif|********\\\\\\\\\\\\\\\\\!-->
+                                <div id="Descriptif" class="tab-pane fade in active">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Réalisateur : </td>
+                                                    <td>{{ serie.realisateur.nom }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Pays :</td>
+                                                    <td>{{ serie.pays }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Année de début :</td>
+                                                    <td>{{ serie.anneeDebut | date('d/m/Y')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Status :</td>
+                                                    <td>{{serie.status}}</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!--/////////////////********|Acteurs|********\\\\\\\\\\\\\\\\\!-->
+                                <div id="Acteurs" class="tab-pane fade">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <tbody>
+                                                {% for acteur in acteurs_serie %}
+                                                    <tr>
+                                                        <td>{{ acteur.nom }} {{ acteur.prenom }}</td>
+                                                        <td>
+                                                            <a href="{{path('acteur_show',{'id':acteur.id})}}">
+                                                                <div class="btn btn-info">
+                                                                    <div class="BoxFrameBtn">
+                                                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--/////////////////********|Synopsy|********\\\\\\\\\\\\\\\\\!-->
+                <div class="panel-group" style="width : 100%;
+                     ">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Synopsy</div>
+                        <div class="panel-body">
+                            {{serie.synopsis}}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Ecrire un Commentaire</div>
+                    <div class="panel-body">
+                        {#<form action="{{path('critique_new',{'id':serie.id})}}" method="POST" class="form-horizontal" role="form">
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2">Laisser un commentaire :</label>
+                                <div class="col-sm-10">
+                                    <input type="textarea" class="form-control" name="content" placeholder="Laisser un commentaire">
+                                    <div class="row">
+                                        <div class="col-sm-2 pull-right ">
+                                            <button type="submit" class="form-control btn btn-success">Envoyer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>#}
+
+                        {{ form_start(form,{'action': path('critique_new',{'id':serie.id})}) }}
+                        {{ form_widget(form) }}
+                        <input type="submit" class="form-control btn btn-success" value="Ajouter un commentaire">
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!--/////////////////********|Aside Right|********\\\\\\\\\\\\\\\\\!-->
+            <div class="col-sm-2 Aside ">
+                <div class="panel-group">
+                    <!--/////////////////********|Saison 1|********\\\\\\\\\\\\\\\\\!-->
+                    <div class="panel panel-success">
+                        {% for key,saison in saisons_all %}
+                            <div class="panel-heading">
+                                <h4 class="panel-title ">
+                                    <a data-toggle="collapse" href="#saison1">Saison {{ key+1 }}</a>
+                                </h4>
+                            </div>
+                            <div id="saison1" class="panel-collapse collapse ">
+                                <ul class="list-group">
+
+                                    {% for key,episode in saison.episodes %}
+                                        <li class="list-group-item"><a href="{{path('episode_show',{'id':episode.id})}}">Episode {{ key+1 }} - {{ episode.titre }}</a></li>
+
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <!--/////////////////********|End Panel|********\\\\\\\\\\\\\\\\\!-->
+                </div>
+            </div>
+        </div>
+        <!--/////////////////********|Critiques|********\\\\\\\\\\\\\\\\\!-->
+        <div class="panel-group">
+            <div class="panel panel-success">
+                <div class="panel-heading">Critique</div>
+                <div class="panel-body">
+                    <div class="panel-group">
+                        <!--/////////////////********|Un Commentaire|********\\\\\\\\\\\\\\\\\!-->
+                        {% for critique in critiques_serie %}
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Auteur :{{ critique.auteur.username }} | {{ critique.auteur.nom }} {{ critique.auteur.prenom }}</div>
+
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <span class="glyphicon glyphicon-user" style="font-size: 100px;"></span>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <div class="flexrow" style="justify-content:  space-between; align-items:  center;
+                                                 ">
+                                                <!--                                                    <p class="">Critique :</p>-->
+                                                <div class="flexrow" style='flex-wrap: nowrap;  align-items:  center;justify-content:  space-around;'>
+                                                    <p style="padding:5px">Note critique : {{ critique.note }}</p>
+                                                    {% if  app.user is not null and critique.id not in app.user.voteCritiques %}
+                                                        <div class="btn btn-success">
+                                                            <div class="BoxFrameBtn " style="padding:5px">
+                                                                <p><a href="{{path('critique_vote',{'id':critique.id, "vote": 1})}}">J'aime</a></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="btn btn-warning" >
+                                                            <div class="BoxFrameBtn " style="padding:5px" >
+                                                                <p><a href="{{path('critique_vote',{'id':critique.id, "vote": -1})}}">J'aime pas</a></p>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if not critique.signale %}
+                                                        <a href="{{path('critique_signale',{'id':critique.id})}}">
+                                                            <div class="btn btn-danger pull-right" >
+                                                                <div class="BoxFrameBtn " style="padding:5px" >
+                                                                    <p>Signaler</p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    {% else %}
+                                                        <div class="btn btn-danger pull-right" >
+                                                            <div class="BoxFrameBtn " style="padding:5px" >
+                                                                <span class="glyphicon glyphicon-exclamation-sign">Commentaire Signalé</span>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                            </div>
+                                            <p style="padding:10px">
+                                                {{ critique.contenu }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section>
+        <div class="row">
+            <div class="col-sm-10">
+                <!--/////////////////********|Titre|********\\\\\\\\\\\\\\\\\!-->
+                <div class="row flexrow">
+                    <div class="col-sm-offset-2 col-sm-4">
+                        <h1>Liste des Acteurs</h1>
+                    </div>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <div class="col-sm-4 ">
+                            <a href="{{path('acteur_new')}}" class="aButton pull-right" >
+                                <div class="btn btn-info">
+                                    <div class="BoxFrameBtn">
+                                        <p>Proposer un Acteur</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <hr>
+                <!--/////////////////********|Bar de recherche|********\\\\\\\\\\\\\\\\\!-->
+                <div>
+                    <div class="flexcol">
+                        <div class="flexrow" style="justify-content:  center;">
+                            <form method='get' action='' class='form-inline flexrow' style='align-items:  center;justify-content:  space-between;
+                                  width : 80%;'>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="search" placeholder="Entrer un mot clé">
+
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <button class="BoxFrameBtn btn-success" type='submit'>
+                                    <p>Chercher</p>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--/////////////////********|Liste des Acteurs|********\\\\\\\\\\\\\\\\\!-->
+                <div class='flexrow' style='justify-content:  center;'>
+                    {% for acteur in acteurs %}
+
+                        <div class="smallBox" style='background-image: url("{{acteur.url}}");background-size: cover;background-repeat: no-repeat;background-position-x: 50%;'>
+                            <a href="{{ path('acteur_show', { 'id': acteur.id }) }}">
+                                <div class="BoxFrame" style=" height: 300px;">
+                                    <div class="BoxTitle flexrow" style="text-shadow: 2px 2px black;justify-content:  flex-end;">
+                                        <h2 style="padding:3px; align-self: flex-end">{{ acteur.prenom }} {{ acteur.nom }}</h2>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="col-sm-2 Aside">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <p>Dernièrs acteurs ajoutées</p>
+                    </div>
+                    <div class="panel-body" style="padding:1px 0px 0px 0px; ">
+
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-info">
+                                <div class="flexrow" style="align-items:  center; justify-content: space-around;
+                                     ">
+                                    <div style="max-width: 30%;">
+                                        <img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRY1t4XoXCwsFcxJzH8u8rg1EYkwEy1MSBVScHOTLKsQFBJkXQNCNS4"/>
+                                    </div>
+                                    <div style="width : 70%;
+                                         ">
+                                        First item
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
